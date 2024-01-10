@@ -2,25 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.util.Set;
 
 public class GameWindow extends JFrame {
-    int n = (int)(Math.random() * 11) + 9;
-    int desired = (int)(Math.random() * 60) + 10;
-    int turns = (int)(Math.random() * (70 - 15)) + 15;
-    JButton sredinskiGumbi[][] = new JButton[n][n];
-    JLabel zgornjiLabli[] = new JLabel[5];
+
     JMenuBar menuBar = new JMenuBar();
     JMenu menuDatoteke = new JMenu();
     JMenuItem menuDtiems[] = new JMenuItem[2];
     JMenu menuIgra;
-    JMenuItem menuIItems[] = new JMenuItem[2];
-    char curr = ' ';
-    char prev = ' ';
-    int sum = 0;
-    GameWindow() {
-        setSize(700, 700);
-        this.setVisible(true);
+    JMenuItem menuIItems[] = new JMenuItem[3];
 
+    Game game;
+    Settings settings;
+    Difficulty diff;
+    GameWindow() {
         menuDatoteke = new JMenu("Datoteke");
 
         menuDtiems[0] = new JMenuItem("Shrani");
@@ -33,11 +29,18 @@ public class GameWindow extends JFrame {
 
         menuIgra = new JMenu("Igra");
 
+        itemIgra eventListener = new itemIgra();
+
         menuIItems[0] = new JMenuItem("Ponovna igra");
-        menuIItems[1] = new JMenuItem("Nastavitve igre");
+        menuIItems[0].addActionListener(eventListener);
+        menuIItems[1] = new JMenuItem("Spremeni nastavitve");
+        menuIItems[1].addActionListener(eventListener);
+        menuIItems[2] = new JMenuItem("Zaključi igro");
+        menuIItems[2].addActionListener(eventListener);
 
         menuIgra.add(menuIItems[0]);
         menuIgra.add(menuIItems[1]);
+        menuIgra.add(menuIItems[2]);
 
         menuBar.add(menuIgra);
         setJMenuBar(menuBar);
@@ -49,81 +52,45 @@ public class GameWindow extends JFrame {
         add(BorderLayout.EAST, desno);
         add(BorderLayout.SOUTH, spodaj);
 
-        JPanel zgoraj = new JPanel();
-        zgoraj.setLayout(new GridLayout(1,5));
-        add(BorderLayout.NORTH, zgoraj);
-
-        zgornjiLabli[0] = new JLabel("Prev: " + prev);
-        zgornjiLabli[1] = new JLabel("Curr: " + curr);
-        zgornjiLabli[2] = new JLabel("Sum: " + sum);
-        zgornjiLabli[3] = new JLabel("Desired: " + desired);
-        zgornjiLabli[4] = new JLabel("Turns: " + turns);
+        settings = new Settings(new settingEventListener());
+        diff = settings.diff;
+        game = new Game(diff);
+        add(BorderLayout.CENTER, game);
 
 
-        for (int i = 0; i < 5; i++) {
-            zgoraj.add(zgornjiLabli[i]);
-        }
 
-        JPanel sredina = new JPanel();
-        sredina.setLayout(new GridLayout(n,n));
-        add(BorderLayout.CENTER, sredina);
+        setSize(700, 700);
+        this.setVisible(true);
+    }
+    class itemIgra implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == menuIItems[0]) {
+                remove(game);
+                game = new Game(diff);
+                add(BorderLayout.CENTER, game);
+                setVisible(true);
 
-        Poslusalec1 slisimGumbke = new Poslusalec1();
+            } else if(e.getSource() == menuIItems[1]) {
+                settings.setVisible(true);
+            }
+            else if(e.getSource() == menuIItems[2]) {
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                sredinskiGumbi[i][j] = new JButton((int)(Math.random() * 9 + 1) + "");
-                sredinskiGumbi[i][j].addActionListener(slisimGumbke);
-
-                sredina.add(sredinskiGumbi[i][j]);
+                System.exit(0);
             }
         }
     }
 
-    class Poslusalec1 implements ActionListener {
+    class settingEventListener implements ActionListener{
+        @Override
         public void actionPerformed(ActionEvent e) {
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (e.getSource() == sredinskiGumbi[i][j]) {
-                        String tmp = sredinskiGumbi[i][j].getText();
-                        prev = curr;
-                        curr = tmp.charAt(0);
-                        sum += Integer.parseInt(tmp);
+            diff = settings.diff;
+            System.out.println(diff.name + " " + diff.minSize + " " + diff.maxTurns);
+            settings.setVisible(false);
 
-                        if(sum >= desired || turns == 0) System.exit(turns);
-
-                        turns--;
-
-                        sredinskiGumbi[i][j].setText("X");
-
-                        zgornjiLabli[0].setText("Prev: " + prev);
-                        zgornjiLabli[1].setText("Curr: " + curr);
-                        zgornjiLabli[2].setText("Sum: " + sum);
-                        zgornjiLabli[4].setText("Turns: " + turns);
-                        setEnabled();
-                    }
-                }
-            }
-        }
-
-        void setEnabled() {
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    int c = j + 1, r = i + 1;
-                    int current = Integer.parseInt(curr + ""), previus = 0;
-                    if (prev != ' ') previus = Integer.parseInt(prev + "");
-
-                    sredinskiGumbi[i][j].setEnabled(false);
-
-                    char text = sredinskiGumbi[i][j].getText().charAt(0);
-                    if (text != 'X') {
-                        if (c % current == 0 || r % current == 0) sredinskiGumbi[i][j].setEnabled(true);
-                        if (prev != ' ' && (c % previus == 0 || r % previus == 0))
-                            sredinskiGumbi[i][j].setEnabled(true);
-
-                    }
-                }
-            }
+            remove(game);
+            game = new Game(diff);
+            add(BorderLayout.CENTER, game);
+            setVisible(true);
         }
     }
 }

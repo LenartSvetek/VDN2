@@ -19,6 +19,12 @@ public class Game extends JPanel {
 
     boolean gameFinished = false;
 
+    /**
+     * Initializira nov game, z zazeljeno tezavnostjo
+     *
+     * @param diff difficulty class
+     * @param gameAL poslusalec za konec igre :)
+     */
     Game(Difficulty diff, GameWindow.gameActionListener gameAL){
         setLayout(new BorderLayout());
 
@@ -58,6 +64,12 @@ public class Game extends JPanel {
         }
     }
 
+    /**
+     * Initializira nov game iz shranjene igre
+     *
+     * @param fileName ime datoteke v kateri je shranjena igra xD
+     * @param gameAL poslusalec za konec igre :)
+     */
     Game(String fileName, GameWindow.gameActionListener gameAL){
         BufferedReader reader;
 
@@ -73,7 +85,7 @@ public class Game extends JPanel {
             desired = Integer.parseInt(controlStr[4]);
             sum = Integer.parseInt(controlStr[5]);
         }catch(Exception e){
-            e.printStackTrace();
+            System.out.println("Error");
             return;
         }
 
@@ -114,16 +126,23 @@ public class Game extends JPanel {
                     sredina.add(sredinskiGumbi[i][j]);
                 }
             }catch (Exception e){
-                e.printStackTrace();
+                System.out.println("Error");
             }
         }
 
         slisimGumbke.setEnabled();
     }
 
+    /**
+     * Shrani game state v datoteko
+     *
+     * @throws IOException ne vem zakaj ampak java je hotla met to :b
+     */
     void saveToFile() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter("save.txt"));
-        writer.write(n + " " + (prev != ' '? prev : -1) + " " + (curr != ' '? curr : -1) + " " + turns + " " + desired + " " + sum + "\n");
+        System.out.println(curr);
+
+        writer.write(n + " " + (prev != ' '? prev : "-1") + " " + (curr != ' '? curr : "-1") + " " + turns + " " + desired + " " + sum + "\n");
         for (JButton[] jButtons : sredinskiGumbi) {
             for (JButton jButton : jButtons) {
                 writer.write(jButton.getText());
@@ -133,6 +152,9 @@ public class Game extends JPanel {
         writer.close();
     }
 
+    /**
+     * Poslusalec1 za kliknjen gumb in potem izvede game loop in logiko
+     */
     class Poslusalec1 implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             for (int i = 0; i < n; i++) {
@@ -161,23 +183,33 @@ public class Game extends JPanel {
             }
         }
 
+        /**
+         * setEnabled funkcija
+         * naredi da se ustrezni gumbi izklopijo in vklopijo
+         */
         void setEnabled() {
+            // steje ce so kaksni gumbi za vklopiti ce ne se ta neznanka uporabi za check ce slucajno ni moznosti igre naprej
             int disable = n*n;
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    int c = j + 1, r = i + 1;
-                    int current = Integer.parseInt(curr + ""), previus = 0;
+                    int c = j + 1, r = i + 1; // c - collumn r - row
+                    int current = (curr != ' ')? Integer.parseInt(curr + "") : 1, previus = 0;
                     if (prev != ' ') previus = Integer.parseInt(prev + "");
 
                     sredinskiGumbi[i][j].setEnabled(false);
 
                     char text = sredinskiGumbi[i][j].getText().charAt(0);
                     if (text != 'X') {
-                        if (c % current == 0 || r % current == 0) {sredinskiGumbi[i][j].setEnabled(true); disable--;}
-                        if (prev != ' ' && (c % previus == 0 || r % previus == 0)) {
-                            sredinskiGumbi[i][j].setEnabled(true);
-                            disable--;
-                        }
+                        if ((c % current == 0 && r % current == 0)) {
+                            if(prev == ' '){
+                                sredinskiGumbi[i][j].setEnabled(true);
+                                disable--;
+                            }
+                            else if ((c % previus == 0 && r % previus == 0)) {
+                                sredinskiGumbi[i][j].setEnabled(true);
+                                disable--;
+                            }                        }
+
 
                     }
                 }

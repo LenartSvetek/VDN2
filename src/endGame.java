@@ -1,7 +1,13 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class endGame extends JPanel {
+    /**
+     * To je panel v katerem se prikazujejo rezultati igre
+     *
+     * @param sum Pridobljene tocke
+     * @param turns Stevilo korakov ki jih je ostalo
+     * @param target Zazeljeno stevilo tock
+     */
     endGame(int sum, int turns, int target){
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 

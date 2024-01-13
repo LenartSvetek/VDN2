@@ -16,6 +16,10 @@ public class GameWindow extends JFrame {
     Settings settings;
     Difficulty diff;
     endGame end;
+
+    /**
+     * Glavno okno v katerem je igra in menuBaarr
+     */
     GameWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -65,9 +69,15 @@ public class GameWindow extends JFrame {
         setSize(700, 700);
         this.setVisible(true);
     }
+
+    /**
+     * To je action listener ki poslusa za evente na menuTab Igra
+     * In potem na podlagi kateri gumb je bil kliknen reagira
+     *
+     */
     class itemIgra implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource() == menuIItems[0]) {
+            if(e.getSource() == menuIItems[0]) { // ponovna igra
                 if(end != null){
                     remove(end);
                     end = null;
@@ -79,20 +89,24 @@ public class GameWindow extends JFrame {
                 add(BorderLayout.CENTER, game);
                 setVisible(true);
 
-            } else if(e.getSource() == menuIItems[1]) {
+            } else if(e.getSource() == menuIItems[1]) { // nastavitve
                 settings.setVisible(true);
             }
-            else if(e.getSource() == menuIItems[2]) {
+            else if(e.getSource() == menuIItems[2]) { // zakljucek igre
 
                 System.exit(0);
             }
         }
     }
 
+    /**
+     * To je action listener ki poslusa za evente na menuTab Datoteka
+     * In potem na podlagi kateri gumb je bil kliknen reagira
+     */
     class datotekaMenuActionListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource() == menuDtiems[0]){
+            if(e.getSource() == menuDtiems[0]){ // odpre shranjeno igro
                 if(end != null){
                     remove(end);
                     end = null;
@@ -104,7 +118,7 @@ public class GameWindow extends JFrame {
                 add(BorderLayout.CENTER, game);
                 setVisible(true);
             }
-            else if(e.getSource() == menuDtiems[1]){
+            else if(e.getSource() == menuDtiems[1]){ // shrani igro
                 try {
                     game.saveToFile();
                 } catch (IOException ex) {
@@ -114,6 +128,11 @@ public class GameWindow extends JFrame {
         }
     }
 
+
+    /**
+     * To je poslusalec ki se aktivira ko je v nastavitvah kliknen gumb done
+     * In inicializira novo igro, na podlagi izbrane tezavnosti
+     */
     class settingEventListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -135,6 +154,10 @@ public class GameWindow extends JFrame {
         }
     }
 
+    /**
+     * poslusalec ki ga poslem game objektu, katera poslusa za spremembo game.finished in reagira
+     * in ustvari endGame objekt
+     */
     class gameActionListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {

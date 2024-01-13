@@ -2,13 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.lang.reflect.Method;
 
 public class Settings extends JFrame {
     Difficulty diff;
-    Difficulty difficulties[];
+    Difficulty[] difficulties;
     JComboBox<String> difficultiesCombo;
 
     JTextField minSizeField;
@@ -19,6 +16,12 @@ public class Settings extends JFrame {
 
     JTextField minTargetField;
     JTextField maxTargetField;
+
+    /**
+     * class za settubguibne /... xD
+     *
+     * @param settingEL poslusalec za klik na gumb dione
+     */
     Settings(GameWindow.settingEventListener settingEL){
         setLayout(new GridLayout(5,1));
 
@@ -33,7 +36,7 @@ public class Settings extends JFrame {
         JLabel difficultiesLabel = new JLabel("Težavnost(Ne pozabi klikniti enter na textfield): ");
         diffPanel.add(difficultiesLabel);
         String[] choices = {"Easy", "Medium", "Hard", "Custom"};
-        difficultiesCombo = new JComboBox<String>(choices);
+        difficultiesCombo = new JComboBox<>(choices);
         difficultiesCombo.setSelectedIndex(1);
         difficultiesCombo.addActionListener(new difficultyComboAL());
         diffPanel.add(difficultiesCombo);
@@ -86,6 +89,10 @@ public class Settings extends JFrame {
         setSize(400, 200);
     }
 
+    /**
+     * ko kliknes gumb done se izbede tole
+     * preveri ce je difficulty settan na custom in pol updata custom diff na pravilne value
+     */
     class doneBtnDiff implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -99,10 +106,13 @@ public class Settings extends JFrame {
                 difficulties[3].maxTarget = Integer.parseInt(maxTargetField.getText());
 
                 diff = difficulties[3];
-                return;
-            };
+            }
         }
     }
+
+    /**
+     * update input field z pravilnimi valuami in disabla jih ce ni na custom diff drugace enabla
+     */
     class difficultyComboAL implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -117,7 +127,7 @@ public class Settings extends JFrame {
                 minTargetField.setEnabled(true);
                 maxTargetField.setEnabled(true);
                 return;
-            };
+            }
             minSizeField.setEnabled(false);
             maxSizeField.setEnabled(false);
             minTurnField.setEnabled(false);

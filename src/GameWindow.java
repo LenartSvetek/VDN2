@@ -18,6 +18,7 @@ public class GameWindow extends JFrame {
     endGame end;
     GameWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         menuDatoteke = new JMenu("Datoteke");
 
         datotekaMenuActionListener datAL = new datotekaMenuActionListener();
@@ -139,7 +140,7 @@ public class GameWindow extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if(game.gameFinished){
                 remove(game);
-                end = new endGame(game.sum, game.turns, game.desired);
+                end = new endGame(game.sum, game.turns, game.desired); // now we are in the endgame
                 add(BorderLayout.CENTER, end);
                 game = null;
             }

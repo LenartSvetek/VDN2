@@ -10,7 +10,7 @@ public class Game extends JPanel {
     int n = (int)(Math.random() * 11) + 9;
     int desired = (int)(Math.random() * 60) + 10;
     int turns = (int)(Math.random() * (70 - 15)) + 15;
-    PrettierButton[][] sredinskiGumbi = new PrettierButton[n][n];
+    JButton[][] sredinskiGumbi = new JButton[n][n];
     JLabel[] zgornjiLabli = new JLabel[5];
 
     char curr = ' ';
@@ -20,7 +20,6 @@ public class Game extends JPanel {
     boolean gameFinished = false;
 
     Game(Difficulty diff, GameWindow.gameActionListener gameAL){
-
         setLayout(new BorderLayout());
 
         JPanel gameInfo = new JPanel();
@@ -29,7 +28,7 @@ public class Game extends JPanel {
         n = (int)(Math.random() * (diff.maxSize - diff.minSize)) + diff.minSize;
         turns = (int)(Math.random() * (diff.maxTurns - diff.minTurns)) + diff.minTurns;
         desired = (int)(Math.random() * (diff.maxTarget - diff.minTarget)) + diff.minTarget;
-        sredinskiGumbi = new PrettierButton[n][n];
+        sredinskiGumbi = new JButton[n][n];
 
         zgornjiLabli[0] = new JLabel("Prev: " + prev);
         zgornjiLabli[1] = new JLabel("Curr: " + curr);
@@ -50,7 +49,7 @@ public class Game extends JPanel {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                sredinskiGumbi[i][j] = new PrettierButton((int)(Math.random() * 9 + 1) + "");
+                sredinskiGumbi[i][j] = new JButton((int)(Math.random() * 9 + 1) + "");
                 sredinskiGumbi[i][j].addActionListener(gameAL);
                 sredinskiGumbi[i][j].addActionListener(slisimGumbke);
 
@@ -84,7 +83,7 @@ public class Game extends JPanel {
         JPanel gameInfo = new JPanel();
         gameInfo.setLayout(new GridLayout(1, 5));
         add( BorderLayout.NORTH, gameInfo);
-        sredinskiGumbi = new PrettierButton[n][n];
+        sredinskiGumbi = new JButton[n][n];
 
         zgornjiLabli[0] = new JLabel("Prev: " + prev);
         zgornjiLabli[1] = new JLabel("Curr: " + curr);
@@ -107,7 +106,7 @@ public class Game extends JPanel {
             try {
                 String line = reader.readLine();
                 for (int j = 0; j < n; j++) {
-                    sredinskiGumbi[i][j] = new PrettierButton(line.charAt(j) + "");
+                    sredinskiGumbi[i][j] = new JButton(line.charAt(j) + "");
                     sredinskiGumbi[i][j].addActionListener(gameAL);
                     sredinskiGumbi[i][j].addActionListener(slisimGumbke);
 
@@ -174,13 +173,16 @@ public class Game extends JPanel {
 
                     char text = sredinskiGumbi[i][j].getText().charAt(0);
                     if (text != 'X') {
-                        if (c % current == 0 || r % current == 0) sredinskiGumbi[i][j].setEnabled(true);
-                        if (prev != ' ' && (c % previus == 0 || r % previus == 0))
+                        if (c % current == 0 || r % current == 0) {sredinskiGumbi[i][j].setEnabled(true); disable--;}
+                        if (prev != ' ' && (c % previus == 0 || r % previus == 0)) {
                             sredinskiGumbi[i][j].setEnabled(true);
+                            disable--;
+                        }
 
                     }
                 }
             }
+            if(disable == n*n) gameFinished = true;
         }
     }
 }

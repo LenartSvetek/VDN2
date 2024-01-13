@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class Game extends JPanel {
 
@@ -9,17 +10,12 @@ public class Game extends JPanel {
     int n = (int)(Math.random() * 11) + 9;
     int desired = (int)(Math.random() * 60) + 10;
     int turns = (int)(Math.random() * (70 - 15)) + 15;
-    JButton sredinskiGumbi[][] = new JButton[n][n];
-    JLabel zgornjiLabli[] = new JLabel[5];
+    JButton[][] sredinskiGumbi = new JButton[n][n];
+    JLabel[] zgornjiLabli = new JLabel[5];
 
     char curr = ' ';
     char prev = ' ';
     int sum = 0;
-    Game(){
-
-    }
-
-
 
     Game(Difficulty diff){
 
@@ -58,6 +54,79 @@ public class Game extends JPanel {
                 sredina.add(sredinskiGumbi[i][j]);
             }
         }
+    }
+
+    Game(String fileName){
+        BufferedReader reader;
+
+        try{
+            reader = new BufferedReader(new FileReader(fileName));
+            String[] controlStr = reader.readLine().split(" ");
+            n = Integer.parseInt(controlStr[0]);
+            prev = controlStr[1].charAt(0);
+            prev = prev != '-'? prev : ' ';
+            curr = controlStr[2].charAt(0);
+            curr = curr != '-'? curr : ' ';
+            turns = Integer.parseInt(controlStr[3]);
+            desired = Integer.parseInt(controlStr[4]);
+            sum = Integer.parseInt(controlStr[5]);
+        }catch(Exception e){
+            e.printStackTrace();
+            return;
+        }
+
+
+        setLayout(new BorderLayout());
+
+        JPanel gameInfo = new JPanel();
+        gameInfo.setLayout(new GridLayout(1, 5));
+        add( BorderLayout.NORTH, gameInfo);
+        sredinskiGumbi = new JButton[n][n];
+
+        zgornjiLabli[0] = new JLabel("Prev: " + prev);
+        zgornjiLabli[1] = new JLabel("Curr: " + curr);
+        zgornjiLabli[2] = new JLabel("Sum: " + sum);
+        zgornjiLabli[3] = new JLabel("Desired: " + desired);
+        zgornjiLabli[4] = new JLabel("Turns: " + turns);
+
+
+        for (int i = 0; i < 5; i++) {
+            gameInfo.add(zgornjiLabli[i]);
+        }
+
+        JPanel sredina = new JPanel();
+        sredina.setLayout(new GridLayout(n,n));
+        add(BorderLayout.CENTER, sredina);
+
+        Poslusalec1 slisimGumbke = new Poslusalec1();
+
+        for (int i = 0; i < n; i++) {
+            try {
+                String line = reader.readLine();
+                for (int j = 0; j < n; j++) {
+                    sredinskiGumbi[i][j] = new JButton(line.charAt(j) + "");
+                    sredinskiGumbi[i][j].addActionListener(slisimGumbke);
+
+                    sredina.add(sredinskiGumbi[i][j]);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        slisimGumbke.setEnabled();
+    }
+
+    void saveToFile() throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("save.txt"));
+        writer.write(n + " " + (prev != ' '? prev : -1) + " " + (curr != ' '? curr : -1) + " " + turns + " " + desired + " " + sum + "\n");
+        for (JButton[] jButtons : sredinskiGumbi) {
+            for (JButton jButton : jButtons) {
+                writer.write(jButton.getText());
+            }
+            writer.write("\n");
+        }
+        writer.close();
     }
 
     class Poslusalec1 implements ActionListener {

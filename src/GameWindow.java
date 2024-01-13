@@ -2,25 +2,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.util.Set;
+import java.io.IOException;
 
 public class GameWindow extends JFrame {
 
     JMenuBar menuBar = new JMenuBar();
-    JMenu menuDatoteke = new JMenu();
-    JMenuItem menuDtiems[] = new JMenuItem[2];
+    JMenu menuDatoteke;
+    JMenuItem[] menuDtiems = new JMenuItem[2];
     JMenu menuIgra;
-    JMenuItem menuIItems[] = new JMenuItem[3];
+    JMenuItem[] menuIItems = new JMenuItem[3];
 
     Game game;
     Settings settings;
     Difficulty diff;
     GameWindow() {
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         menuDatoteke = new JMenu("Datoteke");
 
-        menuDtiems[0] = new JMenuItem("Shrani");
-        menuDtiems[1] = new JMenuItem("Odpri");
+        datotekaMenuActionListener datAL = new datotekaMenuActionListener();
+        menuDtiems[0] = new JMenuItem("Odpri");
+        menuDtiems[0].addActionListener(datAL);
+        menuDtiems[1] = new JMenuItem("Shrani");
+        menuDtiems[1].addActionListener(datAL);
 
         menuDatoteke.add(menuDtiems[0]);
         menuDatoteke.add(menuDtiems[1]);
@@ -76,6 +79,25 @@ public class GameWindow extends JFrame {
             else if(e.getSource() == menuIItems[2]) {
 
                 System.exit(0);
+            }
+        }
+    }
+
+    class datotekaMenuActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == menuDtiems[0]){
+                remove(game);
+                game = new Game("save.txt");
+                add(BorderLayout.CENTER, game);
+                setVisible(true);
+            }
+            else if(e.getSource() == menuDtiems[1]){
+                try {
+                    game.saveToFile();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ public class GameWindow extends JFrame {
     Game game;
     Settings settings;
     Difficulty diff;
+    endGame end;
     GameWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         menuDatoteke = new JMenu("Datoteke");
@@ -57,10 +58,8 @@ public class GameWindow extends JFrame {
 
         settings = new Settings(new settingEventListener());
         diff = settings.diff;
-        game = new Game(diff);
+        game = new Game(diff, new gameActionListener());
         add(BorderLayout.CENTER, game);
-
-
 
         setSize(700, 700);
         this.setVisible(true);
@@ -68,8 +67,14 @@ public class GameWindow extends JFrame {
     class itemIgra implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == menuIItems[0]) {
-                remove(game);
-                game = new Game(diff);
+                if(end != null){
+                    remove(end);
+                    end = null;
+                }else {
+                    remove(game);
+                    game = null;
+                }
+                game = new Game(diff, new gameActionListener());
                 add(BorderLayout.CENTER, game);
                 setVisible(true);
 
@@ -87,8 +92,14 @@ public class GameWindow extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == menuDtiems[0]){
-                remove(game);
-                game = new Game("save.txt");
+                if(end != null){
+                    remove(end);
+                    end = null;
+                }else {
+                    remove(game);
+                    game = null;
+                }
+                game = new Game("save.txt", new gameActionListener());
                 add(BorderLayout.CENTER, game);
                 setVisible(true);
             }
@@ -106,13 +117,32 @@ public class GameWindow extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             diff = settings.diff;
-            System.out.println(diff.name + " " + diff.minSize + " " + diff.maxTurns);
+
             settings.setVisible(false);
 
-            remove(game);
-            game = new Game(diff);
+            if(end != null){
+                remove(end);
+                end = null;
+            }else {
+                remove(game);
+                game = null;
+            }
+
+            game = new Game(diff, new gameActionListener());
             add(BorderLayout.CENTER, game);
             setVisible(true);
+        }
+    }
+
+    class gameActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(game.gameFinished){
+                remove(game);
+                end = new endGame(game.sum, game.turns, game.desired);
+                add(BorderLayout.CENTER, end);
+                game = null;
+            }
         }
     }
 }

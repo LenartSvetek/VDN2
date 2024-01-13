@@ -23,7 +23,7 @@ public class Settings extends JFrame {
         setLayout(new GridLayout(5,1));
 
         difficulties = new Difficulty[4];
-        difficulties[0] = new Difficulty("Easy", 5, 10, 20, 30, 20, 40);
+        difficulties[0] = new Difficulty("Easy", 10, 15, 5, 10, 20, 40);
         difficulties[1] = new Difficulty("Medium", 10, 20, 15, 70, 10, 70);
         difficulties[2] = new Difficulty("Hard", 15, 25, 20, 80, 30, 100);
         difficulties[3] = new Difficulty("Custom", 0, 0, 0, 0, 0, 0);
@@ -98,7 +98,6 @@ public class Settings extends JFrame {
                 difficulties[3].minTarget = Integer.parseInt(minTargetField.getText());
                 difficulties[3].maxTarget = Integer.parseInt(maxTargetField.getText());
 
-                System.out.printf("hhj");
                 diff = difficulties[3];
                 return;
             };

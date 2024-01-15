@@ -189,7 +189,7 @@ public class Game extends JPanel {
          */
         void setEnabled() {
             // steje ce so kaksni gumbi za vklopiti ce ne se ta neznanka uporabi za check ce slucajno ni moznosti igre naprej
-            int disable = n*n;
+            boolean disable = true;
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     int c = j + 1, r = i + 1; // c - collumn r - row
@@ -201,20 +201,20 @@ public class Game extends JPanel {
                     char text = sredinskiGumbi[i][j].getText().charAt(0);
                     if (text != 'X') {
                         if ((c % current == 0 && r % current == 0)) {
-                            if(prev == ' '){
                                 sredinskiGumbi[i][j].setEnabled(true);
-                                disable--;
-                            }
-                            else if ((c % previus == 0 && r % previus == 0)) {
-                                sredinskiGumbi[i][j].setEnabled(true);
-                                disable--;
-                            }                        }
+                                disable = false;
 
+
+                        }
+                        if (prev != ' ' && (c % previus == 0 && r % previus == 0)) {
+                            sredinskiGumbi[i][j].setEnabled(true);
+                            disable = false;
+                        }
 
                     }
                 }
             }
-            if(disable == n*n) gameFinished = true;
+            if(disable) gameFinished = true;
         }
     }
 }
